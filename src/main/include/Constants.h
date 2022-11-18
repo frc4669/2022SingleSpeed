@@ -14,6 +14,14 @@
  * they are needed.
  */
 
+#define TRAJECTORY_NAME "idk"
+
+#include <units/velocity.h>
+#include <units/acceleration.h>
+#include <units/time.h>
+#include <units/voltage.h>
+#include <units/length.h>
+
 namespace OperatorConstants {
   constexpr bool kCanTurnInPlace = true; // curvature drive turning in place
 
@@ -21,12 +29,21 @@ namespace OperatorConstants {
 } 
 
 namespace DriveConstants {
-  // Drivetrain Talon FX CAN IDs
-  constexpr int kLeftMain = 11;    // Leading left motor
+  constexpr int kLeftMain = 11;          // Leading left motor
   constexpr int kLeftSecondary = 12;     // Following left motor
 
-  constexpr int kRightMain = 21;   // Leading right motor
+  constexpr int kRightMain = 21;         // Leading right motor
   constexpr int kRightSecondary = 22;    // Following right motor
-  
-} // namespace DriveConstants
+
+  constexpr auto ks = 0.56801_V;
+  constexpr auto kv = 1.2256_V * 1_s / 1_m;
+  constexpr auto ka = 0.071355_V * 1_s * 1_s / 1_m;
+
+  constexpr double kp = 1.2487;
+  constexpr double ki = 0;
+  constexpr double kd = 0;
+
+  constexpr auto kMaxAutoSpeed = 1_mps;
+  constexpr auto kMaxAutoAccel = 1_mps_sq;
+}
 
