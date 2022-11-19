@@ -9,6 +9,12 @@
 #include "Constants.h"
 #include <frc/motorcontrol/MotorControllerGroup.h>
 #include <frc/drive/DifferentialDrive.h>
+#include <frc/kinematics/DifferentialDriveOdometry.h>
+#include <frc/kinematics/DifferentialDriveWheelSpeeds.h>
+#include <frc/geometry/Rotation2d.h>
+#include <frc/geometry/Pose2d.h>
+#include <frc/smartdashboard/Field2d.h>
+#include <frc/ADIS16470_IMU.h>
 
 class Drivetrain : public frc2::SubsystemBase {
  public:
@@ -19,6 +25,22 @@ class Drivetrain : public frc2::SubsystemBase {
   void ConfigureMotor(WPI_TalonFX &motor, bool isInverted);
 
   void CurvatureDrive(double forward, double rotation); 
+
+  void ResetOdometry(frc::Pose2d pose, frc::Rotation2d rotation);
+
+  frc::Pose2d GetOdometryPose();
+
+  frc::Rotation2d GetRotation();
+
+  units::meters_per_second_t GetLeftVelocity();
+  units::meters_per_second_t GetRightVelocity();
+
+  units::meter_t GetLeftDistance();
+  units::meter_t GetRightDistance();
+
+  frc::DifferentialDriveWheelSpeeds GetWheelSpeeds();
+
+  void TankDriveVolts(units::volt_t left, units::volt_t right);
 
   /**
    * Will be called periodically whenever the CommandScheduler runs.
@@ -38,4 +60,9 @@ class Drivetrain : public frc2::SubsystemBase {
 
   // main drive object
   frc::DifferentialDrive m_drive{ m_leftMotors, m_rightMotors };
+
+  frc::DifferentialDriveOdometry m_odometry{ frc::Rotation2d(), frc::Pose2d() };
+  frc::Field2d m_field;
+
+  frc::ADIS16470_IMU m_imu;
 };

@@ -27,24 +27,25 @@ RobotContainer::RobotContainer() : m_autonomousCommand(&m_subsystem) {
 }
 
 void RobotContainer::ConfigureButtonBindings() {
-  // Configure your button bindings here
+  i_f310.redButton.WhenPressed([this] { m_drivetrain.ResetOdometry(frc::Pose2d(), frc::Rotation2d()); }, { &m_drivetrain });
 }
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
   pathplanner::PathPlannerTrajectory autoTrajectory = pathplanner::PathPlanner::loadPath(TRAJECTORY_NAME, DriveConstants::kMaxAutoSpeed, DriveConstants::kMaxAutoAccel);
+  frc::Trajectory WPItrajectory = autoTrajectory.asWPILibTrajectory();
 
-  m_drivetrain.ResetOdometry(autoTrajectory.getInitialPose(), autoTrajectory.getInitialPose().Rotation());
+  m_drivetrain.ResetOdometry(WPItrajectory.InitialPose(), WPItrajectory.InitialPose().Rotation());
 
   frc2::RamseteCommand followTrajectory {
     autoTrajectory.asWPILibTrajectory(),
-    &m_drivetrain.GetOdometryPose,
+    [this] { return m_drivetrain.GetOdometryPose(); },
     frc::RamseteController(),
     frc::SimpleMotorFeedforward<units::meters>(DriveConstants::ks, DriveConstants::kv, DriveConstants::ka),
     frc::DifferentialDriveKinematics(DriveConstants::kTrackWidth),
-    &m_drivetrain.GetWheelSpeeds,
+    [this] { return m_drivetrain.GetWheelSpeeds(); },
     frc2::PIDController(DriveConstants::kp, DriveConstants::ki, DriveConstants::kd),
     frc2::PIDController(DriveConstants::kp, DriveConstants::ki, DriveConstants::kd),
-    &m_drivetrain.TankDriveVolts,
+    [this] (auto left, auto right) { return m_drivetrain.TankDriveVolts(left, right); },
     { &m_drivetrain }
   };
 

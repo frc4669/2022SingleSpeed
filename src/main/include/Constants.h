@@ -14,7 +14,7 @@
  * they are needed.
  */
 
-#define TRAJECTORY_NAME "idk"
+#define TRAJECTORY_NAME "CornerCurve"
 
 #include <units/velocity.h>
 #include <units/acceleration.h>
@@ -42,6 +42,12 @@ namespace DriveConstants {
   constexpr double kp = 1.2487;
   constexpr double ki = 0;
   constexpr double kd = 0;
+
+  constexpr double kGearRatio = 11.25;
+
+  constexpr auto kTrackWidth = 20.75_in;
+  constexpr double kWheelCircumference = 6;
+  constexpr double kInchesPerTick = kWheelCircumference / (2048 * kGearRatio);
 
   constexpr auto kMaxAutoSpeed = 1_mps;
   constexpr auto kMaxAutoAccel = 1_mps_sq;

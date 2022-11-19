@@ -22,7 +22,11 @@ Drivetrain::Drivetrain() {
 }
 
 // This method will be called once per scheduler run
-void Drivetrain::Periodic() {}
+void Drivetrain::Periodic() {
+  m_odometry.Update(GetRotation(), GetLeftDistance(), GetRightDistance());
+
+  m_field.SetRobotPose(m_odometry.GetPose());
+}
 
 void Drivetrain::ResetEncoders() {
   // Reset left
@@ -33,7 +37,62 @@ void Drivetrain::ResetEncoders() {
 
 void Drivetrain::CurvatureDrive(double speed, double rotation) {
   m_drive.CurvatureDrive(speed, rotation, OperatorConstants::kCanTurnInPlace); 
-} 
+}
+
+void Drivetrain::ResetOdometry(frc::Pose2d pose, frc::Rotation2d rotation) {
+  ResetEncoders();
+  m_imu.Reset();
+  m_odometry.ResetPosition(pose, rotation);
+}
+
+void Drivetrain::TankDriveVolts(units::volt_t left, units::volt_t right) {
+  m_leftMain.SetVoltage(left);
+  m_rightMain.SetVoltage(right);
+}
+
+frc::Pose2d Drivetrain::GetOdometryPose() {
+  return m_odometry.GetPose();
+}
+
+frc::Rotation2d Drivetrain::GetRotation() {
+  return frc::Rotation2d(m_imu.GetAngle());
+}
+
+units::meters_per_second_t Drivetrain::GetLeftVelocity() {
+  double ticksPerSecond = m_leftMain.GetSensorCollection().GetIntegratedSensorVelocity() * 10;
+
+  return units::meters_per_second_t(
+    units::meter_t(units::inch_t(ticksPerSecond * DriveConstants::kInchesPerTick)).value()
+  );
+}
+
+units::meters_per_second_t Drivetrain::GetRightVelocity() {
+  double ticksPerSecond = m_rightMain.GetSensorCollection().GetIntegratedSensorVelocity() * 10;
+
+  return -units::meters_per_second_t(
+    units::meter_t(units::inch_t(ticksPerSecond * DriveConstants::kInchesPerTick)).value()
+  );
+}
+
+units::meter_t Drivetrain::GetLeftDistance() {
+  return units::meter_t(
+    units::inch_t(
+      m_leftMain.GetSensorCollection().GetIntegratedSensorPosition() * DriveConstants::kInchesPerTick
+    )
+  );
+}
+
+units::meter_t Drivetrain::GetRightDistance() {
+  return units::meter_t(
+    units::inch_t(
+      m_rightMain.GetSensorCollection().GetIntegratedSensorPosition() * DriveConstants::kInchesPerTick
+    )
+  );
+}
+
+frc::DifferentialDriveWheelSpeeds Drivetrain::GetWheelSpeeds() {
+  return { GetLeftVelocity(), GetRightVelocity() };
+}
 
 void Drivetrain::ConfigureMotor(WPI_TalonFX &motor, bool isInverted) {
   // set the max velocity and acceleration for motion magic
