@@ -14,18 +14,19 @@
  * they are needed.
  */
 
-#define TRAJECTORY_NAME "CornerCurve"
+#define TRAJECTORY_NAME "EventAutoChallenge"
 
 #include <units/velocity.h>
 #include <units/acceleration.h>
 #include <units/time.h>
 #include <units/voltage.h>
 #include <units/length.h>
+#include <units/constants.h>
 
 namespace OperatorConstants {
   constexpr bool kCanTurnInPlace = true; // curvature drive turning in place
 
-  constexpr double kTurningSpeedMutiplier = -0.5; // slows down movement as joystick is too sensentive. 
+  constexpr double kTurningSpeedMutiplier = -0.25; // slows down movement as joystick is too sensentive. 
 } 
 
 namespace DriveConstants {
@@ -46,7 +47,7 @@ namespace DriveConstants {
   constexpr double kGearRatio = 11.25;
 
   constexpr auto kTrackWidth = 20.75_in;
-  constexpr double kWheelCircumference = 6;
+  constexpr double kWheelCircumference = 6 * units::constants::pi;
   constexpr double kInchesPerTick = kWheelCircumference / (2048 * kGearRatio);
 
   constexpr auto kMaxAutoSpeed = 1_mps;

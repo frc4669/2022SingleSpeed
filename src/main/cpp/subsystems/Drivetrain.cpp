@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "subsystems/Drivetrain.h"
+#include <frc/smartdashboard/SmartDashboard.h>
 
 Drivetrain::Drivetrain() {
   // Disable safety on the drivetrain motors
@@ -19,13 +20,18 @@ Drivetrain::Drivetrain() {
 
   // Reset encoder values to 0 (this also syncs the motor controllers)
   ResetEncoders();
+
+  frc::SmartDashboard::PutData("Field", &m_field);
 }
 
 // This method will be called once per scheduler run
 void Drivetrain::Periodic() {
-  m_odometry.Update(GetRotation(), GetLeftDistance(), GetRightDistance());
+  m_odometry.Update(GetRotation(), -GetLeftDistance(), -GetRightDistance());
 
   m_field.SetRobotPose(m_odometry.GetPose());
+
+  frc::SmartDashboard::PutNumber("Left Distance", -GetLeftDistance().value());
+  frc::SmartDashboard::PutNumber("Right Distance", -GetRightDistance().value());
 }
 
 void Drivetrain::ResetEncoders() {
@@ -83,7 +89,7 @@ units::meter_t Drivetrain::GetLeftDistance() {
 }
 
 units::meter_t Drivetrain::GetRightDistance() {
-  return units::meter_t(
+  return -units::meter_t(
     units::inch_t(
       m_rightMain.GetSensorCollection().GetIntegratedSensorPosition() * DriveConstants::kInchesPerTick
     )
