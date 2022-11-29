@@ -14,7 +14,7 @@
  * they are needed.
  */
 
-#define TRAJECTORY_NAME "EventAutoChallenge"
+#define TRAJECTORY_NAME "OneMeter"//"EventAutoChallenge"
 
 #include <units/velocity.h>
 #include <units/acceleration.h>
@@ -36,11 +36,11 @@ namespace DriveConstants {
   constexpr int kRightMain = 21;         // Leading right motor
   constexpr int kRightSecondary = 22;    // Following right motor
 
-  constexpr auto ks = 0.56801_V;
-  constexpr auto kv = 1.2256_V * 1_s / 1_m;
-  constexpr auto ka = 0.071355_V * 1_s * 1_s / 1_m;
+  constexpr auto ks = 0.55805_V;//0.56801_V;
+  constexpr auto kv = 2.5552_V * 1_s / 1_m;//1.2256_V * 1_s / 1_m;
+  constexpr auto ka = 0.17303_V * 1_s * 1_s / 1_m; //0.071355_V
 
-  constexpr double kp = 1.2487;
+  constexpr double kp = 2.7863;//1.2487;
   constexpr double ki = 0;
   constexpr double kd = 0;
 
@@ -50,7 +50,7 @@ namespace DriveConstants {
   constexpr double kWheelCircumference = 6 * units::constants::pi;
   constexpr double kInchesPerTick = kWheelCircumference / (2048 * kGearRatio);
 
-  constexpr auto kMaxAutoSpeed = 1_mps;
+  constexpr auto kMaxAutoSpeed = 0.3_mps;
   constexpr auto kMaxAutoAccel = 1_mps_sq;
 }
 

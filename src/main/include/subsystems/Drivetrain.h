@@ -42,6 +42,8 @@ class Drivetrain : public frc2::SubsystemBase {
 
   void TankDriveVolts(units::volt_t left, units::volt_t right);
 
+  frc::Field2d* GetField();
+
   /**
    * Will be called periodically whenever the CommandScheduler runs.
    */

@@ -36,6 +36,8 @@ frc2::Command* RobotContainer::GetAutonomousCommand() {
 
   m_drivetrain.ResetOdometry(WPItrajectory.InitialPose(), WPItrajectory.InitialPose().Rotation());
 
+  m_drivetrain.GetField()->GetObject("trajectory")->SetTrajectory(WPItrajectory);
+
   frc2::RamseteCommand followTrajectory {
     autoTrajectory.asWPILibTrajectory(),
     [this] { return m_drivetrain.GetOdometryPose(); },

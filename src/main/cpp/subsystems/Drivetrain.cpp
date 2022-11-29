@@ -32,6 +32,9 @@ void Drivetrain::Periodic() {
 
   frc::SmartDashboard::PutNumber("Left Distance", -GetLeftDistance().value());
   frc::SmartDashboard::PutNumber("Right Distance", -GetRightDistance().value());
+
+  frc::SmartDashboard::PutNumber("Left Velocity", GetLeftVelocity().value());
+  frc::SmartDashboard::PutNumber("Right Velocity", GetRightVelocity().value());
 }
 
 void Drivetrain::ResetEncoders() {
@@ -67,7 +70,7 @@ frc::Rotation2d Drivetrain::GetRotation() {
 units::meters_per_second_t Drivetrain::GetLeftVelocity() {
   double ticksPerSecond = m_leftMain.GetSensorCollection().GetIntegratedSensorVelocity() * 10;
 
-  return units::meters_per_second_t(
+  return -units::meters_per_second_t(
     units::meter_t(units::inch_t(ticksPerSecond * DriveConstants::kInchesPerTick)).value()
   );
 }
@@ -75,7 +78,7 @@ units::meters_per_second_t Drivetrain::GetLeftVelocity() {
 units::meters_per_second_t Drivetrain::GetRightVelocity() {
   double ticksPerSecond = m_rightMain.GetSensorCollection().GetIntegratedSensorVelocity() * 10;
 
-  return -units::meters_per_second_t(
+  return units::meters_per_second_t(
     units::meter_t(units::inch_t(ticksPerSecond * DriveConstants::kInchesPerTick)).value()
   );
 }
@@ -98,6 +101,10 @@ units::meter_t Drivetrain::GetRightDistance() {
 
 frc::DifferentialDriveWheelSpeeds Drivetrain::GetWheelSpeeds() {
   return { GetLeftVelocity(), GetRightVelocity() };
+}
+
+frc::Field2d* Drivetrain::GetField() {
+  return &m_field;
 }
 
 void Drivetrain::ConfigureMotor(WPI_TalonFX &motor, bool isInverted) {
