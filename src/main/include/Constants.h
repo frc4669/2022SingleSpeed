@@ -26,15 +26,15 @@
 namespace OperatorConstants {
   constexpr bool kCanTurnInPlace = true; // curvature drive turning in place
 
-  constexpr double kTurningSpeedMutiplier = -0.25; // slows down movement as joystick is too sensentive. 
+  constexpr double kTurningSpeedMutiplier = 0.25; // slows down movement as joystick is too sensentive. 
 } 
 
 namespace DriveConstants {
-  constexpr int kLeftMain = 11;          // Leading left motor
-  constexpr int kLeftSecondary = 12;     // Following left motor
+  constexpr int kLeftMain = 21;          // Leading left motor
+  constexpr int kLeftSecondary = 22;     // Following left motor
 
-  constexpr int kRightMain = 21;         // Leading right motor
-  constexpr int kRightSecondary = 22;    // Following right motor
+  constexpr int kRightMain = 11;         // Leading right motor
+  constexpr int kRightSecondary = 12;    // Following right motor
 
   constexpr auto ks = 0.55805_V;//0.56801_V;
   constexpr auto kv = 2.5552_V * 1_s / 1_m;//1.2256_V * 1_s / 1_m;

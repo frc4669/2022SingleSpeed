@@ -19,7 +19,7 @@ RobotContainer::RobotContainer() : m_autonomousCommand(&m_subsystem) {
   // Setup F310 joystick bindings 
   m_drivetrain.SetDefaultCommand(frc2::RunCommand(
     [this] 
-      {  m_drivetrain.CurvatureDrive(i_f310.getLeftJoyY(), i_f310.getRightJoyX() * OperatorConstants::kTurningSpeedMutiplier); },
+      {  m_drivetrain.CurvatureDrive(-i_f310.getLeftJoyY(), i_f310.getRightJoyX() * OperatorConstants::kTurningSpeedMutiplier); },
       {  &m_drivetrain  }
   ));
 
