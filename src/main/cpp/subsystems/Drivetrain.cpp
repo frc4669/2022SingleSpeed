@@ -10,12 +10,12 @@ Drivetrain::Drivetrain() {
   m_drive.SetSafetyEnabled(false);
 
   // Configure the drivetrain motors (for now)
-  ConfigureMotor(m_leftMain, true);
-  ConfigureMotor(m_leftSecondary, true);
+  ConfigureMotor(m_leftMain, false);
+  ConfigureMotor(m_leftSecondary, false);
   m_leftSecondary.Follow(m_leftMain); // set back left motor to follow the front left motor
 
-  ConfigureMotor(m_rightMain, false);
-  ConfigureMotor(m_rightSecondary, false);
+  ConfigureMotor(m_rightMain, true);
+  ConfigureMotor(m_rightSecondary, true);
   m_rightSecondary.Follow(m_rightMain); // set back right motor to follow the front right motor
 
   // Reset encoder values to 0 (this also syncs the motor controllers)
@@ -26,18 +26,19 @@ Drivetrain::Drivetrain() {
 
 // This method will be called once per scheduler run
 void Drivetrain::Periodic() {
-  m_odometry.Update(GetRotation(), -GetLeftDistance(), -GetRightDistance());
+  m_odometry.Update(GetRotation(), GetLeftDistance(), GetRightDistance());
 
   m_field.SetRobotPose(m_odometry.GetPose());
 
-  frc::SmartDashboard::PutNumber("Left Distance", -GetLeftDistance().value());
-  frc::SmartDashboard::PutNumber("Right Distance", -GetRightDistance().value());
+  frc::SmartDashboard::PutNumber("Left Distance", GetLeftDistance().value());
+  frc::SmartDashboard::PutNumber("Right Distance", GetRightDistance().value());
+
+  frc::SmartDashboard::PutNumber("Left Velocity", GetLeftVelocity().value());
+  frc::SmartDashboard::PutNumber("Right Velocity", GetRightVelocity().value());
 }
 
 void Drivetrain::ResetEncoders() {
-  // Reset left
   m_leftMain.GetSensorCollection().SetIntegratedSensorPosition(0);
-  // Reset Right
   m_rightMain.GetSensorCollection().SetIntegratedSensorPosition(0);
 }
 
@@ -98,6 +99,10 @@ units::meter_t Drivetrain::GetRightDistance() {
 
 frc::DifferentialDriveWheelSpeeds Drivetrain::GetWheelSpeeds() {
   return { GetLeftVelocity(), GetRightVelocity() };
+}
+
+frc::Field2d* Drivetrain::GetField() {
+  return &m_field;
 }
 
 void Drivetrain::ConfigureMotor(WPI_TalonFX &motor, bool isInverted) {

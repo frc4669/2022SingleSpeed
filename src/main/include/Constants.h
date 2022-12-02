@@ -14,7 +14,7 @@
  * they are needed.
  */
 
-#define TRAJECTORY_NAME "EventAutoChallenge"
+#define TRAJECTORY_NAME "Circle"
 
 #include <units/velocity.h>
 #include <units/acceleration.h>
@@ -26,21 +26,21 @@
 namespace OperatorConstants {
   constexpr bool kCanTurnInPlace = true; // curvature drive turning in place
 
-  constexpr double kTurningSpeedMutiplier = -0.25; // slows down movement as joystick is too sensentive. 
+  constexpr double kTurningSpeedMutiplier = 0.3; // slows down turning movement as joystick is too sensentive. 
 } 
 
 namespace DriveConstants {
-  constexpr int kLeftMain = 11;          // Leading left motor
-  constexpr int kLeftSecondary = 12;     // Following left motor
+  constexpr int kLeftMain = 21;          // Leading left motor
+  constexpr int kLeftSecondary = 22;     // Following left motor
 
-  constexpr int kRightMain = 21;         // Leading right motor
-  constexpr int kRightSecondary = 22;    // Following right motor
+  constexpr int kRightMain = 11;         // Leading right motor
+  constexpr int kRightSecondary = 12;    // Following right motor
 
-  constexpr auto ks = 0.56801_V;
-  constexpr auto kv = 1.2256_V * 1_s / 1_m;
-  constexpr auto ka = 0.071355_V * 1_s * 1_s / 1_m;
+  constexpr auto ks = 0.60698_V;
+  constexpr auto kv = 2.5158_V * 1_s / 1_m;
+  constexpr auto ka = 0.17347_V * 1_s * 1_s / 1_m;
 
-  constexpr double kp = 1.2487;
+  constexpr double kp = 0.01; // sysid value = 2.7766
   constexpr double ki = 0;
   constexpr double kd = 0;
 
@@ -50,7 +50,7 @@ namespace DriveConstants {
   constexpr double kWheelCircumference = 6 * units::constants::pi;
   constexpr double kInchesPerTick = kWheelCircumference / (2048 * kGearRatio);
 
-  constexpr auto kMaxAutoSpeed = 1_mps;
+  constexpr auto kMaxAutoSpeed = 0.3_mps;
   constexpr auto kMaxAutoAccel = 1_mps_sq;
 }
 
