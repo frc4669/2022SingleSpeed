@@ -16,6 +16,7 @@ Vision::TrackingInfo Vision::GetTargetTrackingInfo() {
 
     targetInfo.target = *bestTarget;
 
+    targetInfo.cameraSpaceTaken = bestTarget->GetArea(); 
     targetInfo.pose = bestTarget->GetBestCameraToTarget(); 
 
     // bestTarget.

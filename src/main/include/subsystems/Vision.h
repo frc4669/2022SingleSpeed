@@ -27,6 +27,13 @@ class Vision : public frc2::SubsystemBase {
     // transformation to go to the target
     frc::Transform3d pose;
 
+    /** as the ball gets closer, the % that it takes up is going to increase, can be used to 
+     *  estimate the relative distance of the target from the robot 
+     * 
+     *  NOTE: The percentage is going to instantly decrease once the ball gets too close
+    **/ 
+    units::percent_t cameraSpaceTaken = 0;
+
     // are we sure the info's correct, ie: is ambiguity above 0.2 or not
     bool isCertain = false;
   };
