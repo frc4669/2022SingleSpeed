@@ -40,8 +40,8 @@ class GoToTarget
     Vision* m_vision; 
     
     // // used to calculate output voltage/velocity
-    // frc::RamseteController m_controller; 
-    // frc::DifferentialDriveKinematics m_kinematics; 
+    frc::RamseteController m_controller; 
+    frc::DifferentialDriveKinematics m_kinematics; 
 
     // output
     std::function<void(units::meters_per_second_t, units::meters_per_second_t)> m_output;
