@@ -14,7 +14,7 @@
  * they are needed.
  */
 
-#define TRAJECTORY_NAME "OneMeter"//"EventAutoChallenge"
+#define TRAJECTORY_NAME "Circle"
 
 #include <units/velocity.h>
 #include <units/acceleration.h>
@@ -26,7 +26,7 @@
 namespace OperatorConstants {
   constexpr bool kCanTurnInPlace = true; // curvature drive turning in place
 
-  constexpr double kTurningSpeedMutiplier = 0.25; // slows down movement as joystick is too sensentive. 
+  constexpr double kTurningSpeedMutiplier = 0.3; // slows down turning movement as joystick is too sensentive. 
 } 
 
 namespace DriveConstants {
@@ -36,11 +36,11 @@ namespace DriveConstants {
   constexpr int kRightMain = 11;         // Leading right motor
   constexpr int kRightSecondary = 12;    // Following right motor
 
-  constexpr auto ks = 0.55805_V;//0.56801_V;
-  constexpr auto kv = 2.5552_V * 1_s / 1_m;//1.2256_V * 1_s / 1_m;
-  constexpr auto ka = 0.17303_V * 1_s * 1_s / 1_m; //0.071355_V
+  constexpr auto ks = 0.60698_V;
+  constexpr auto kv = 2.5158_V * 1_s / 1_m;
+  constexpr auto ka = 0.17347_V * 1_s * 1_s / 1_m;
 
-  constexpr double kp = 2.7863;//1.2487;
+  constexpr double kp = 0.01; // sysid value = 2.7766
   constexpr double ki = 0;
   constexpr double kd = 0;
 
