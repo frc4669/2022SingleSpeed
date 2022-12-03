@@ -26,7 +26,9 @@ void Robot::RobotPeriodic() {
  * can use it to reset any subsystem information you want to clear when the
  * robot is disabled.
  */
-void Robot::DisabledInit() {}
+void Robot::DisabledInit() {
+  frc::SmartDashboard::PutBoolean("Autonomous Routine", false);
+}
 
 void Robot::DisabledPeriodic() {}
 
@@ -35,6 +37,7 @@ void Robot::DisabledPeriodic() {}
  * RobotContainer} class.
  */
 void Robot::AutonomousInit() {
+  frc::SmartDashboard::PutBoolean("Autonomous Routine", true);
   m_autonomousCommand = m_container.GetAutonomousCommand();
 
   if (m_autonomousCommand != nullptr) {
