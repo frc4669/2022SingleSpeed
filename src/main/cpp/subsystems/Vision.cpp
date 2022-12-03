@@ -21,7 +21,7 @@ Vision::TrackingInfo Vision::GetTargetTrackingInfo() {
 
     // bestTarget.
 
-    if (-1 < bestTarget->GetPoseAmbiguity() < 0.2) targetInfo.isCertain = true; 
+    if ((-1 < bestTarget->GetPoseAmbiguity()) && (bestTarget->GetPoseAmbiguity() < 0.2)) targetInfo.isCertain = true; 
     
     return targetInfo; 
 }
