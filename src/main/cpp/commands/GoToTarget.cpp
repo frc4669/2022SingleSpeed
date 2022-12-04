@@ -102,6 +102,8 @@ void GoToTarget::Execute() {
       rightFeedforward;
 
   m_output(leftOutput, rightOutput); 
+
+  previousSpeed = targetWheelSpeeds;
 }
 
 // Called once the command ends or is interrupted.
