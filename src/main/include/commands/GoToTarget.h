@@ -10,6 +10,7 @@
 #include <frc/controller/RamseteController.h>
 #include <frc/kinematics/DifferentialDriveKinematics.h>
 #include <frc2/command/PIDCommand.h>
+#include <frc/controller/SimpleMotorFeedforward.h>
 
 #include <subsystems/Drivetrain.h>
 #include <subsystems/Vision.h>
@@ -24,7 +25,17 @@
 class GoToTarget
     : public frc2::CommandHelper<frc2::CommandBase, GoToTarget> {
   public:
-    GoToTarget(Drivetrain* drivetrain, Vision* vision);
+    GoToTarget(
+      Drivetrain* drivetrain, 
+      Vision* vision,
+      frc::RamseteController ramseteController,
+      frc::DifferentialDriveKinematics kinematics,
+      frc::SimpleMotorFeedforward<units::meter_t> feedforward, 
+      frc2::PIDController *leftPID, 
+      frc2::PIDController *rightPID, 
+      frc::DifferentialDriveWheelSpeeds (*wheelSpeedsGetter) (), 
+      void (*motorVoltageSetter) (units::volt_t left, units::volt_t right)
+    );
 
     void Initialize() override;
 
@@ -39,12 +50,25 @@ class GoToTarget
     Drivetrain* m_drivetrain; 
     Vision* m_vision; 
     
-    // // used to calculate output voltage/velocity
+    // tracking
+    frc::Timer timer; 
+    units::second_t previousTime; 
+    frc::DifferentialDriveWheelSpeeds previousSpeed; 
+
+    // calculations
     frc::RamseteController m_controller; 
-    frc::DifferentialDriveKinematics m_kinematics; 
+    frc::DifferentialDriveKinematics m_kinematics;
+    frc::SimpleMotorFeedforward<units::meter_t> m_feedforward;
+    struct {
+      std::unique_ptr<frc2::PIDController> left; 
+      std::unique_ptr<frc2::PIDController> right;
+    } m_pid; 
+
+    // robot physical parameter getters 
+    frc::DifferentialDriveWheelSpeeds (*getSpeeds) (); 
 
     // output
-    std::function<void(units::meters_per_second_t, units::meters_per_second_t)> m_output;
+    void (*m_output) (units::volt_t left, units::volt_t right);
 
     // config 
     units::meters_per_second_t desieredVelocity { 0.5 }; 

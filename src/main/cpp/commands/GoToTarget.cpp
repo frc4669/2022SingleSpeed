@@ -5,20 +5,50 @@
 #include "commands/GoToTarget.h"
 
 GoToTarget::GoToTarget(
-  Drivetrain* drivetrain, 
-  Vision* vision
-  ){
+  Drivetrain* drivetrain,
+  Vision* vision,
+  frc::RamseteController ramseteController,
+  frc::DifferentialDriveKinematics kinematics,
+  frc::SimpleMotorFeedforward<units::meter_t> feedforward, 
+  frc2::PIDController *leftPID, 
+  frc2::PIDController *rightPID, 
+  frc::DifferentialDriveWheelSpeeds (*wheelSpeedsGetter) (), 
+  void (*motorVoltageSetter) (units::volt_t left, units::volt_t right)
+) : // initilize list 
+  m_kinematics(kinematics),
+  m_controller(ramseteController), 
+  m_feedforward(feedforward)
+{
   AddRequirements({ drivetrain, vision }); 
 
+  // initializing pointers
+  this->m_pid.left = std::make_unique<frc2::PIDController>(leftPID); 
+  this->m_pid.right = std::make_unique<frc2::PIDController>(rightPID); 
+  this->m_output = motorVoltageSetter; 
+  this->getSpeeds = wheelSpeedsGetter; 
   this->m_drivetrain = drivetrain; 
   this->m_vision = vision; 
 }
 
 // Called when the command is initially scheduled.
-void GoToTarget::Initialize() {}
+void GoToTarget::Initialize() {
+  previousTime = units::second_t(-1); 
+
+  previousSpeed = m_kinematics.ToWheelSpeeds(frc::ChassisSpeeds());
+
+  m_pid.left->Reset();
+  m_pid.right->Reset();
+
+  timer.Reset(); 
+  timer.Start();
+}
 
 // Called repeatedly when this Command is scheduled to run
 void GoToTarget::Execute() {
+
+  auto currentTime = timer.Get(); 
+  auto dt = currentTime - previousTime; 
+  this->previousTime = currentTime; 
 
   auto target = m_vision->GetTargetTrackingInfo(); 
 
@@ -40,7 +70,11 @@ void GoToTarget::Execute() {
 
   auto estimatedTime = distance / linearVelocity;  
 
-  auto angularVelocity = linearVelocity * rotationToTarget.Radians(); 
+  auto angularVelocity = rotationToTarget.Radians() / estimatedTime; 
+
+  // output calculation 
+  // calculations referenced from frc::RasmeteCommand
+  //https://github.com/wpilibsuite/allwpilib/blob/878cc8defb27f5089395186ad1d907993b57be9c/wpilibNewCommands/src/main/native/cpp/frc2/command/RamseteCommand.cpp
 
   // this's most likely not gonna work, it's more like a closed looped controller rn cuz it'll be reacting based on the 
   // next to impossible results of wished linear no movement of target & accurate info 
@@ -48,7 +82,26 @@ void GoToTarget::Execute() {
   auto chassieSpeeds = m_controller.Calculate(frc::Pose2d(), targetPose, linearVelocity, angularVelocity); 
   auto targetWheelSpeeds = m_kinematics.ToWheelSpeeds(chassieSpeeds); 
 
-  m_output(targetWheelSpeeds.left, targetWheelSpeeds.right); 
+  // feedforward and pid control stuff
+  auto leftFeedforward = m_feedforward.Calculate(
+      targetWheelSpeeds.left,
+      (targetWheelSpeeds.left - previousSpeed.left) / dt);
+
+  auto rightFeedforward = m_feedforward.Calculate(
+      targetWheelSpeeds.right,
+      (targetWheelSpeeds.right - previousSpeed.right) / dt);
+
+  auto leftOutput =
+      units::volt_t{m_pid.left->Calculate(
+          getSpeeds().left.value(), targetWheelSpeeds.left.value())} +
+      leftFeedforward;
+
+  auto rightOutput =
+      units::volt_t{m_pid.right->Calculate(
+          getSpeeds().right.value(), targetWheelSpeeds.right.value())} +
+      rightFeedforward;
+
+  m_output(leftOutput, rightOutput); 
 }
 
 // Called once the command ends or is interrupted.
