@@ -9,14 +9,14 @@ GoToTarget::GoToTarget(
   Vision* vision,
   frc::RamseteController ramseteController,
   frc::DifferentialDriveKinematics kinematics,
-  frc::SimpleMotorFeedforward<units::meter_t> feedforward, 
-  frc2::PIDController *leftPID, 
-  frc2::PIDController *rightPID, 
+  frc::SimpleMotorFeedforward<units::meters> feedforward, 
+  frc2::PIDController leftPID, 
+  frc2::PIDController rightPID, 
   frc::DifferentialDriveWheelSpeeds (*wheelSpeedsGetter) (), 
   void (*motorVoltageSetter) (units::volt_t left, units::volt_t right)
 ) : // initilize list 
-  m_kinematics(kinematics),
   m_controller(ramseteController), 
+  m_kinematics(kinematics),
   m_feedforward(feedforward)
 {
   AddRequirements({ drivetrain, vision }); 

@@ -30,9 +30,9 @@ class GoToTarget
       Vision* vision,
       frc::RamseteController ramseteController,
       frc::DifferentialDriveKinematics kinematics,
-      frc::SimpleMotorFeedforward<units::meter_t> feedforward, 
-      frc2::PIDController *leftPID, 
-      frc2::PIDController *rightPID, 
+      frc::SimpleMotorFeedforward<units::meters> feedforward, 
+      frc2::PIDController leftPID, 
+      frc2::PIDController rightPID, 
       frc::DifferentialDriveWheelSpeeds (*wheelSpeedsGetter) (), 
       void (*motorVoltageSetter) (units::volt_t left, units::volt_t right)
     );
@@ -58,7 +58,7 @@ class GoToTarget
     // calculations
     frc::RamseteController m_controller; 
     frc::DifferentialDriveKinematics m_kinematics;
-    frc::SimpleMotorFeedforward<units::meter_t> m_feedforward;
+    frc::SimpleMotorFeedforward<units::meters> m_feedforward;
     struct {
       std::unique_ptr<frc2::PIDController> left; 
       std::unique_ptr<frc2::PIDController> right;
