@@ -55,6 +55,8 @@ void Drivetrain::ResetOdometry(frc::Pose2d pose, frc::Rotation2d rotation) {
 void Drivetrain::TankDriveVolts(units::volt_t left, units::volt_t right) {
   m_leftMain.SetVoltage(left);
   m_rightMain.SetVoltage(right);
+  m_leftSecondary.SetVoltage(left);
+  m_rightSecondary.SetVoltage(right);
 }
 
 frc::Pose2d Drivetrain::GetOdometryPose() {

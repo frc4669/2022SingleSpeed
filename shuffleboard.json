@@ -83,6 +83,52 @@
               "Y-axis/Unit": "m/s",
               "Visible data/SmartDashboard/Right Velocity": true
             }
+          },
+          "5,0": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Autonomous Routine",
+              "_title": "Autonomous Routine",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "7,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Auto Voltage L",
+              "_title": "Auto Voltage L"
+            }
+          },
+          "8,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Auto Voltage R",
+              "_title": "Auto Voltage R"
+            }
+          },
+          "9,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Initial Auto Rotation",
+              "_title": "Initial Auto Rotation"
+            }
           }
         }
       }
