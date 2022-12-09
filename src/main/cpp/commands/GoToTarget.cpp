@@ -19,6 +19,9 @@ GoToTarget::GoToTarget(
   m_kinematics(kinematics),
   m_feedforward(feedforward)
 {
+
+  if (!BetaFlags::MoreComplicatedGoToTargetCommand) this->Cancel(); 
+
   AddRequirements({ drivetrain, vision }); 
 
   // initializing pointers

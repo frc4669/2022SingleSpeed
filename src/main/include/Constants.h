@@ -23,6 +23,11 @@
 #include <units/length.h>
 #include <units/constants.h>
 
+namespace BetaFlags { // weather if different work in progress systems are enabled
+  constexpr bool AlignToTargetCommand = true; 
+  constexpr bool MoreComplicatedGoToTargetCommand = false;   
+}
+
 namespace OperatorConstants {
   constexpr bool kCanTurnInPlace = true; // curvature drive turning in place
 
