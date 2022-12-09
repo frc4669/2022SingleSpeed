@@ -12,8 +12,8 @@ GoToTarget::GoToTarget(
   frc::SimpleMotorFeedforward<units::meters> feedforward, 
   frc2::PIDController leftPID, 
   frc2::PIDController rightPID, 
-  frc::DifferentialDriveWheelSpeeds (*wheelSpeedsGetter) (), 
-  void (*motorVoltageSetter) (units::volt_t left, units::volt_t right)
+  std::function<frc::DifferentialDriveWheelSpeeds()> wheelSpeedsGetter, 
+  std::function<void(units::volt_t left, units::volt_t right)> motorVoltageSetter
 ) : // initilize list 
   m_controller(ramseteController), 
   m_kinematics(kinematics),

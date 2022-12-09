@@ -33,8 +33,8 @@ class GoToTarget
       frc::SimpleMotorFeedforward<units::meters> feedforward, 
       frc2::PIDController leftPID, 
       frc2::PIDController rightPID, 
-      frc::DifferentialDriveWheelSpeeds (*wheelSpeedsGetter) (), 
-      void (*motorVoltageSetter) (units::volt_t left, units::volt_t right)
+      std::function<frc::DifferentialDriveWheelSpeeds()> wheelSpeedsGetter, 
+      std::function<void(units::volt_t left, units::volt_t right)> motorVoltageSetter
     );
 
     void Initialize() override;
@@ -65,10 +65,10 @@ class GoToTarget
     } m_pid; 
 
     // robot physical parameter getters 
-    frc::DifferentialDriveWheelSpeeds (*getSpeeds) (); 
+    std::function<frc::DifferentialDriveWheelSpeeds()> getSpeeds;
 
     // output
-    void (*m_output) (units::volt_t left, units::volt_t right);
+    std::function<void(units::volt_t left, units::volt_t right)>m_output;
 
     // config 
     units::meters_per_second_t desieredVelocity { 0.5 }; 
