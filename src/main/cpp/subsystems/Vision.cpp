@@ -17,13 +17,15 @@ Vision::TrackingInfo Vision::GetTargetTrackingInfo() {
     targetInfo.target = *bestTarget;
 
     targetInfo.cameraSpaceTaken = bestTarget->GetArea(); 
-    targetInfo.pose = bestTarget->GetBestCameraToTarget(); 
-
-    // bestTarget.
+    targetInfo.pose = bestTarget->GetBestCameraToTarget();
 
     if ((-1 < bestTarget->GetPoseAmbiguity()) && (bestTarget->GetPoseAmbiguity() < 0.2)) targetInfo.isCertain = true; 
     
     return targetInfo; 
+}
+
+PhotonPipelineResult Vision::GetPipelineResult() {
+    return m_frontCamera.GetLatestResult();
 }
 
 std::unique_ptr<PhotonTrackedTarget> Vision::GetBestTarget() {
@@ -34,4 +36,6 @@ std::unique_ptr<PhotonTrackedTarget> Vision::GetBestTarget() {
 }
 
 // This method will be called once per scheduler run
-void Vision::Periodic() {}
+void Vision::Periodic() {
+    frc::SmartDashboard::PutBoolean("Target Detected", GetPipelineResult().HasTargets());
+}

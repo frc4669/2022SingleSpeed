@@ -14,7 +14,7 @@
  * they are needed.
  */
 
-#define TRAJECTORY_NAME "Circle"
+#define TRAJECTORY_NAME "FourMeters"
 
 #include <units/velocity.h>
 #include <units/acceleration.h>

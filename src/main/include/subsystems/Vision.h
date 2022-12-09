@@ -7,18 +7,22 @@
 #include <frc2/command/SubsystemBase.h>
 
 #include <frc/geometry/Transform2d.h>
+#include <frc/geometry/Pose2d.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 #include <units/units.h>
 
 #include <photonlib/PhotonUtils.h>
 #include <photonlib/PhotonCamera.h>
 
-#include <frc/geometry/Pose2d.h>
+#include "Constants.h"
 
 using namespace photonlib; 
 
 class Vision : public frc2::SubsystemBase {
  public:
   Vision();
+
+  PhotonPipelineResult GetPipelineResult();
 
   struct TrackingInfo {
 
@@ -50,9 +54,7 @@ class Vision : public frc2::SubsystemBase {
   void Periodic() override;
 
  private:
-
-  // cameras
-  PhotonCamera m_frontCamera { "m_frontCamera" }; 
+  PhotonCamera m_frontCamera { "Front Camera" };
 
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.

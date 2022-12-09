@@ -60,7 +60,7 @@ class GoToTarget
     frc::DifferentialDriveKinematics m_kinematics;
     frc::SimpleMotorFeedforward<units::meters> m_feedforward;
     struct {
-      std::unique_ptr<frc2::PIDController> left; 
+      std::unique_ptr<frc2::PIDController> left;
       std::unique_ptr<frc2::PIDController> right;
     } m_pid; 
 

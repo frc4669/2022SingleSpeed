@@ -11,6 +11,8 @@
 #include <pathplanner/lib/PathPlanner.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
+#include "commands/AlignToTarget.h"
+
 RobotContainer::RobotContainer() : m_autonomousCommand(&m_subsystem) {
   // Initialize all of your commands and subsystems here
 
@@ -29,6 +31,7 @@ RobotContainer::RobotContainer() : m_autonomousCommand(&m_subsystem) {
 
 void RobotContainer::ConfigureButtonBindings() {
   i_f310.redButton.WhenPressed([this] { m_drivetrain.ResetOdometry(frc::Pose2d(), frc::Rotation2d()); }, { &m_drivetrain });
+  i_f310.rightShoulderButton.WhenHeld(AlignToTarget(&m_drivetrain, &m_vision));
 }
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {

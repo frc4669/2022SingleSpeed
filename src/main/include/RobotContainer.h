@@ -9,6 +9,7 @@
 #include "commands/ExampleCommand.h"
 #include "subsystems/ExampleSubsystem.h"
 #include "subsystems/Drivetrain.h"
+#include "subsystems/Vision.h"
 #include "controllers/GamepadF310.h"
 
 #include <frc2/command/RunCommand.h>
@@ -16,7 +17,7 @@
 /**
  * This class is where the bulk of the robot should be declared.  Since
  * Command-based is a "declarative" paradigm, very little robot logic should
- * actually be handled in the {@link Robot} periodic methods (other than the
+ * actually be handled in the   {@link Robot} periodic methods (other than the
  * scheduler calls).  Instead, the structure of the robot (including subsystems,
  * commands, and button mappings) should be declared here.
  */
@@ -32,6 +33,7 @@ class RobotContainer {
   ExampleCommand m_autonomousCommand;
 
   Drivetrain m_drivetrain;
+  Vision m_vision;
 
   GamepadF310 i_f310{ 0 };
   void ConfigureButtonBindings();
