@@ -8,8 +8,6 @@
 
 AlignToTarget::AlignToTarget(Drivetrain* drivetrain, Vision* vision) : m_drivetrain(drivetrain), m_vision(vision) {
   
-  if (!BetaFlags::AlignToTargetCommand) this->Cancel(); 
-
   // Use addRequirements() here to declare subsystem dependencies.
   AddRequirements({ drivetrain, vision });
 }

@@ -13,6 +13,7 @@
 
 #include "commands/GoToTarget.h"
 #include "commands/AlignToTarget.h"
+#include "commands/RangeTarget.h"
 
 RobotContainer::RobotContainer() : m_autonomousCommand(&m_subsystem) {
   // Initialize all of your commands and subsystems here
@@ -33,9 +34,9 @@ RobotContainer::RobotContainer() : m_autonomousCommand(&m_subsystem) {
 void RobotContainer::ConfigureButtonBindings() {
   i_f310.redButton.WhenPressed([this] { m_drivetrain.ResetOdometry(frc::Pose2d(), frc::Rotation2d()); }, { &m_drivetrain });
   i_f310.rightShoulderButton.WhenHeld(AlignToTarget(&m_drivetrain, &m_vision));
+  i_f310.leftShoulderButton.WhenHeld(RangeTarget(&m_drivetrain, &m_vision));
   
-  
-  i_f310.orangeButton.WhenHeld(
+  /*i_f310.orangeButton.WhenHeld(
     GoToTarget(
       &m_drivetrain,
       &m_vision, 
@@ -46,9 +47,8 @@ void RobotContainer::ConfigureButtonBindings() {
       frc2::PIDController(DriveConstants::kp, DriveConstants::ki, DriveConstants::kd),
       [this] { return m_drivetrain.GetWheelSpeeds(); },
       [this] (auto left, auto right) { return m_drivetrain.TankDriveVolts(left, right); }
-    ), true
-  );
-
+    )
+  );*/
 }
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {

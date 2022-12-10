@@ -71,5 +71,5 @@ class GoToTarget
     std::function<void(units::volt_t left, units::volt_t right)>m_output;
 
     // config 
-    units::meters_per_second_t desieredVelocity { 0.5 }; 
+    units::meters_per_second_t desiredVelocity { 0.5 }; 
 };

@@ -20,8 +20,6 @@ GoToTarget::GoToTarget(
   m_feedforward(feedforward)
 {
 
-  if (!BetaFlags::MoreComplicatedGoToTargetCommand) this->Cancel(); 
-
   AddRequirements({ drivetrain, vision }); 
 
   // initializing pointers
@@ -67,13 +65,17 @@ void GoToTarget::Execute() {
   
   auto distance = units::meter_t(std::hypot(translationToTarget.X().value(), translationToTarget.Y().value()));
   
-  auto linearVelocity = desieredVelocity; 
+  frc::SmartDashboard::PutNumber("X trans", translationToTarget.X().value()); 
+  frc::SmartDashboard::PutNumber("Y trans", translationToTarget.Y().value());
+
+  auto linearVelocity = desiredVelocity; 
   // purpousely lowering speed 
-  if (!target.isCertain) linearVelocity /= 2;
+  // if (!target.isCertain) linearVelocity /= 2;
 
   auto estimatedTime = distance / linearVelocity;  
 
-  auto angularVelocity = rotationToTarget.Radians() / estimatedTime; 
+  auto angularVelocity = units::radians_per_second_t(0.00001); //rotationToTarget.Radians() / estimatedTime; 
+  frc::SmartDashboard::PutNumber("Desired AV", angularVelocity.value());
 
   // output calculation 
   // calculations referenced from frc::RasmeteCommand
