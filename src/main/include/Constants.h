@@ -17,26 +17,22 @@
 #define TRAJECTORY_NAME "FourMeters"
 
 #include <units/velocity.h>
-#include <units/angle.h>
 #include <units/acceleration.h>
 #include <units/time.h>
 #include <units/voltage.h>
 #include <units/length.h>
 #include <units/constants.h>
 
+namespace BetaFlags { // weather if different work in progress systems are enabled
+  constexpr bool AlignToTargetCommand = true; 
+  constexpr bool MoreComplicatedGoToTargetCommand = false;   
+}
+
 namespace OperatorConstants {
   constexpr bool kCanTurnInPlace = true; // curvature drive turning in place
 
   constexpr double kTurningSpeedMutiplier = 0.3; // slows down turning movement as joystick is too sensentive. 
-}
-
-namespace Dimensions {
-  constexpr auto kTargetHeight = 22_in;
-  constexpr auto kCameraPitch = units::degree_t(0);
-  constexpr auto kCameraHeight = 14.8_in;
-
-  constexpr auto kDesiredRange = 1_m;
-}
+} 
 
 namespace DriveConstants {
   constexpr int kLeftMain = 21;          // Leading left motor
