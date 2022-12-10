@@ -7,8 +7,8 @@
 #include <frc2/command/RamseteCommand.h>
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/SequentialCommandGroup.h>
-#include <pathplanner/lib/PathPlannerTrajectory.h>
-#include <pathplanner/lib/PathPlanner.h>
+// #include <pathplanner/lib/PathPlannerTrajectory.h>
+// #include <pathplanner/lib/PathPlanner.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
 #include "commands/GoToTarget.h"
@@ -52,30 +52,32 @@ void RobotContainer::ConfigureButtonBindings() {
 }
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
-  pathplanner::PathPlannerTrajectory autoTrajectory = pathplanner::PathPlanner::loadPath(TRAJECTORY_NAME, DriveConstants::kMaxAutoSpeed, DriveConstants::kMaxAutoAccel);
-  frc::Trajectory WPItrajectory = autoTrajectory.asWPILibTrajectory();
+  return nullptr; 
 
-  frc::SmartDashboard::PutNumber("Initial Auto Rotation", WPItrajectory.InitialPose().Rotation().Degrees().value());
+//   pathplanner::PathPlannerTrajectory autoTrajectory = pathplanner::PathPlanner::loadPath(TRAJECTORY_NAME, DriveConstants::kMaxAutoSpeed, DriveConstants::kMaxAutoAccel);
+//   frc::Trajectory WPItrajectory = autoTrajectory.asWPILibTrajectory();
 
-  m_drivetrain.ResetOdometry(WPItrajectory.InitialPose(), WPItrajectory.InitialPose().Rotation());
+//   frc::SmartDashboard::PutNumber("Initial Auto Rotation", WPItrajectory.InitialPose().Rotation().Degrees().value());
 
-  m_drivetrain.GetField()->GetObject("trajectory")->SetTrajectory(WPItrajectory);
+//   m_drivetrain.ResetOdometry(WPItrajectory.InitialPose(), WPItrajectory.InitialPose().Rotation());
 
-  frc2::RamseteCommand followTrajectory {
-    autoTrajectory.asWPILibTrajectory(),
-    [this] { return m_drivetrain.GetOdometryPose(); },
-    frc::RamseteController(),
-    frc::SimpleMotorFeedforward<units::meters>(DriveConstants::ks, DriveConstants::kv, DriveConstants::ka),
-    frc::DifferentialDriveKinematics(DriveConstants::kTrackWidth),
-    [this] { return m_drivetrain.GetWheelSpeeds(); },
-    frc2::PIDController(DriveConstants::kp, DriveConstants::ki, DriveConstants::kd),
-    frc2::PIDController(DriveConstants::kp, DriveConstants::ki, DriveConstants::kd),
-    [this] (auto left, auto right) { frc::SmartDashboard::PutNumber("Auto Voltage L", left.value()); frc::SmartDashboard::PutNumber("Auto Voltage R", right.value()); return m_drivetrain.TankDriveVolts(left, right); },
-    { &m_drivetrain }
-  };
+//   m_drivetrain.GetField()->GetObject("trajectory")->SetTrajectory(WPItrajectory);
 
-  return new frc2::SequentialCommandGroup(
-    std::move(followTrajectory)/*,
-    frc2::InstantCommand([this] { m_drivetrain.TankDriveVolts(0_V, 0_V); })*/
-  );
+//   frc2::RamseteCommand followTrajectory {
+//     autoTrajectory.asWPILibTrajectory(),
+//     [this] { return m_drivetrain.GetOdometryPose(); },
+//     frc::RamseteController(),
+//     frc::SimpleMotorFeedforward<units::meters>(DriveConstants::ks, DriveConstants::kv, DriveConstants::ka),
+//     frc::DifferentialDriveKinematics(DriveConstants::kTrackWidth),
+//     [this] { return m_drivetrain.GetWheelSpeeds(); },
+//     frc2::PIDController(DriveConstants::kp, DriveConstants::ki, DriveConstants::kd),
+//     frc2::PIDController(DriveConstants::kp, DriveConstants::ki, DriveConstants::kd),
+//     [this] (auto left, auto right) { frc::SmartDashboard::PutNumber("Auto Voltage L", left.value()); frc::SmartDashboard::PutNumber("Auto Voltage R", right.value()); return m_drivetrain.TankDriveVolts(left, right); },
+//     { &m_drivetrain }
+//   };
+
+//   return new frc2::SequentialCommandGroup(
+//     std::move(followTrajectory)/*,
+//     frc2::InstantCommand([this] { m_drivetrain.TankDriveVolts(0_V, 0_V); })*/
+//   );
 }
