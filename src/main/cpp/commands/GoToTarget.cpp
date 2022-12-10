@@ -20,8 +20,6 @@ GoToTarget::GoToTarget(
   m_feedforward(feedforward)
 {
 
-  if (!BetaFlags::MoreComplicatedGoToTargetCommand) this->Cancel(); 
-
   AddRequirements({ drivetrain, vision }); 
 
   // initializing pointers
