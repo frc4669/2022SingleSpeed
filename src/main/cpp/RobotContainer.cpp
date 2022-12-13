@@ -22,11 +22,11 @@ RobotContainer::RobotContainer() : m_autonomousCommand(&m_subsystem) {
   ConfigureButtonBindings();
 
   // Setup F310 joystick bindings 
-  m_drivetrain.SetDefaultCommand(frc2::RunCommand(
-    [this] 
-      {  m_drivetrain.CurvatureDrive(i_f310.getLeftJoyY(), i_f310.getRightJoyX() * OperatorConstants::kTurningSpeedMutiplier); },
-      {  &m_drivetrain  }
-  ));
+  // m_drivetrain.SetDefaultCommand(frc2::RunCommand(
+  //   [this] 
+  //     {  m_drivetrain.CurvatureDrive(i_f310.getLeftJoyY(), i_f310.getRightJoyX() * OperatorConstants::kTurningSpeedMutiplier); },
+  //     {  &m_drivetrain  }
+  // ));
 
   m_drivetrain.ResetEncoders();
 }
@@ -36,7 +36,7 @@ void RobotContainer::ConfigureButtonBindings() {
   i_f310.rightShoulderButton.WhenHeld(AlignToTarget(&m_drivetrain, &m_vision));
   i_f310.leftShoulderButton.WhenHeld(RangeTarget(&m_drivetrain, &m_vision));
   
-  /*i_f310.orangeButton.WhenHeld(
+  i_f310.orangeButton.WhenHeld(
     GoToTarget(
       &m_drivetrain,
       &m_vision, 
@@ -48,7 +48,7 @@ void RobotContainer::ConfigureButtonBindings() {
       [this] { return m_drivetrain.GetWheelSpeeds(); },
       [this] (auto left, auto right) { return m_drivetrain.TankDriveVolts(left, right); }
     )
-  );*/
+  );
 }
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {

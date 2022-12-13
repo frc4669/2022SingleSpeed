@@ -7,23 +7,6 @@
 Vision::Vision() = default;
 
 
-Vision::TrackingInfo Vision::GetTargetTrackingInfo() {
-    auto bestTarget = GetBestTarget(); 
-
-    TrackingInfo targetInfo;  
-
-    if (bestTarget == nullptr) return targetInfo; 
-
-    targetInfo.target = *bestTarget;
-
-    targetInfo.cameraSpaceTaken = bestTarget->GetArea(); 
-    targetInfo.pose = bestTarget->GetBestCameraToTarget();
-
-    if ((-1 < bestTarget->GetPoseAmbiguity()) && (bestTarget->GetPoseAmbiguity() < 0.2)) targetInfo.isCertain = true; 
-    
-    return targetInfo; 
-}
-
 PhotonPipelineResult Vision::GetPipelineResult() {
     return m_frontCamera.GetLatestResult();
 }

@@ -51,14 +51,15 @@ void GoToTarget::Execute() {
   auto dt = currentTime - previousTime; 
   this->previousTime = currentTime; 
 
-  auto target = m_vision->GetTargetTrackingInfo(); 
+  auto targetPtr = m_vision->GetBestTarget(); 
+  if (targetPtr == nullptr) return; 
+  auto target = *targetPtr;  
 
-  // checking if target exist
-  if (target.cameraSpaceTaken.value() == 0) return;
+  auto targetPose3D = target.GetBestCameraToTarget(); 
 
   // converting 3d tracking to 2d translation and rotation
-  auto translationToTarget = target.pose.Translation().ToTranslation2d(); 
-  auto rotationToTarget = target.pose.Rotation().ToRotation2d();
+  auto translationToTarget = targetPose3D.Translation().ToTranslation2d();
+  auto rotationToTarget = targetPose3D.Rotation().ToRotation2d();
   
   // generating a 2d target pose (not actually to go there, only for calculations)
   auto targetPose = frc::Pose2d(translationToTarget, rotationToTarget); 
@@ -106,7 +107,7 @@ void GoToTarget::Execute() {
           getSpeeds().right.value(), targetWheelSpeeds.right.value())} +
       rightFeedforward;
 
-  m_output(leftOutput, rightOutput); 
+  //m_output(leftOutput, rightOutput); 
 
   previousSpeed = targetWheelSpeeds;
 }
