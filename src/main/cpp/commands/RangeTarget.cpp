@@ -16,7 +16,9 @@ RangeTarget::RangeTarget(Drivetrain* drivetrain, Vision* vision) : m_drivetrain(
 }
 
 // Called when the command is initially scheduled.
-void RangeTarget::Initialize() {}
+void RangeTarget::Initialize() {
+  frc::SmartDashboard::PutData("Range PID", &m_controller);
+}
 
 // Called repeatedly when this Command is scheduled to run
 void RangeTarget::Execute() {

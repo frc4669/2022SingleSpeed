@@ -8,9 +8,12 @@
 #include <frc2/command/CommandHelper.h>
 #include <frc/controller/PIDController.h>
 
+#include <photonlib/PhotonPipelineResult.h>
+#include <photonlib/PhotonUtils.h>
+
 #include "Constants.h"
-#include "subsystems/Vision.h"
 #include "subsystems/Drivetrain.h"
+#include "subsystems/Vision.h"
 
 /**
  * An example command.
@@ -19,10 +22,10 @@
  * directly; this is crucially important, or else the decorator functions in
  * Command will *not* work!
  */
-class RangeTarget
-    : public frc2::CommandHelper<frc2::CommandBase, RangeTarget> {
+class AlignAndRange
+    : public frc2::CommandHelper<frc2::CommandBase, AlignAndRange> {
  public:
-  RangeTarget(Drivetrain* drivetrain, Vision* vision);
+  AlignAndRange(Drivetrain* drivetrain, Vision* vision);
 
   void Initialize() override;
 
@@ -33,8 +36,9 @@ class RangeTarget
   bool IsFinished() override;
 
  private:
+  frc::PIDController m_angularControl { 0.008, 0, 0 };
+  frc::PIDController m_linearControl { 0.2, 0, 0 };
+
   Drivetrain* m_drivetrain;
   Vision* m_vision;
-
-  frc::PIDController m_controller { 0.2, 0, 0 };
 };

@@ -35,5 +35,5 @@ class AlignToTarget
   Drivetrain* m_drivetrain;
   Vision* m_vision;
   
-  frc::PIDController m_controller { DriveConstants::kp, DriveConstants::ki, DriveConstants::kd };
+  frc::PIDController m_controller { 0.008, 0, 0 };
 };

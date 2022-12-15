@@ -14,6 +14,7 @@
 #include "commands/GoToTarget.h"
 #include "commands/AlignToTarget.h"
 #include "commands/RangeTarget.h"
+#include "commands/AlignAndRange.h"
 
 RobotContainer::RobotContainer() : m_autonomousCommand(&m_subsystem) {
   // Initialize all of your commands and subsystems here
@@ -22,19 +23,20 @@ RobotContainer::RobotContainer() : m_autonomousCommand(&m_subsystem) {
   ConfigureButtonBindings();
 
   // Setup F310 joystick bindings 
-  // m_drivetrain.SetDefaultCommand(frc2::RunCommand(
-  //   [this] 
-  //     {  m_drivetrain.CurvatureDrive(i_f310.getLeftJoyY(), i_f310.getRightJoyX() * OperatorConstants::kTurningSpeedMutiplier); },
-  //     {  &m_drivetrain  }
-  // ));
+  m_drivetrain.SetDefaultCommand(frc2::RunCommand(
+    [this] 
+      {  m_drivetrain.CurvatureDrive(i_f310.getLeftJoyY(), i_f310.getRightJoyX() * OperatorConstants::kTurningSpeedMutiplier); },
+      {  &m_drivetrain  }
+  ));
 
   m_drivetrain.ResetEncoders();
 }
 
 void RobotContainer::ConfigureButtonBindings() {
   i_f310.redButton.WhenPressed([this] { m_drivetrain.ResetOdometry(frc::Pose2d(), frc::Rotation2d()); }, { &m_drivetrain });
-  i_f310.rightShoulderButton.WhenHeld(AlignToTarget(&m_drivetrain, &m_vision));
-  i_f310.leftShoulderButton.WhenHeld(RangeTarget(&m_drivetrain, &m_vision));
+  // i_f310.rightShoulderButton.WhenHeld(AlignToTarget(&m_drivetrain, &m_vision));
+  // i_f310.leftShoulderButton.WhenHeld(RangeTarget(&m_drivetrain, &m_vision));
+  i_f310.rightShoulderButton.WhenHeld(AlignAndRange(&m_drivetrain, &m_vision));
   
   i_f310.orangeButton.WhenHeld(
     GoToTarget(
@@ -46,7 +48,11 @@ void RobotContainer::ConfigureButtonBindings() {
       frc2::PIDController(DriveConstants::kp, DriveConstants::ki, DriveConstants::kd),
       frc2::PIDController(DriveConstants::kp, DriveConstants::ki, DriveConstants::kd),
       [this] { return m_drivetrain.GetWheelSpeeds(); },
-      [this] (auto left, auto right) { return m_drivetrain.TankDriveVolts(left, right); }
+      [this] (auto left, auto right) { 
+          frc::SmartDashboard::PutNumber("Left OUT", left.value()); 
+          frc::SmartDashboard::PutNumber("Right OUT", right.value());
+        return m_drivetrain.TankDriveVolts(left, right); 
+      }
     )
   );
 }

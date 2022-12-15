@@ -35,7 +35,7 @@ namespace Dimensions {
   constexpr auto kCameraPitch = units::degree_t(0);
   constexpr auto kCameraHeight = 14.8_in;
 
-  constexpr auto kDesiredRange = 1_m;
+  constexpr auto kDesiredRange = 2_m;
 }
 
 namespace DriveConstants {

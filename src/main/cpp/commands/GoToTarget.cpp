@@ -52,22 +52,27 @@ void GoToTarget::Execute() {
   this->previousTime = currentTime; 
 
   auto targetPtr = m_vision->GetBestTarget(); 
-  if (targetPtr == nullptr) return; 
+  if (targetPtr == nullptr) {
+    m_output(units::volt_t(0), units::volt_t(0)); 
+    return; 
+  }
   auto target = *targetPtr;  
 
-  auto targetPose3D = target.GetBestCameraToTarget(); 
+  // auto targetPose3D = target.GetBestCameraToTarget(); 
 
   // converting 3d tracking to 2d translation and rotation
-  auto translationToTarget = targetPose3D.Translation().ToTranslation2d();
-  auto rotationToTarget = targetPose3D.Rotation().ToRotation2d();
+  // auto translationToTarget = targetPose3D.Translation().ToTranslation2d();
+  // auto rotationToTarget = targetPose3D.Rotation().ToRotation2d();
+
+  auto rotationToTarget = frc::Rotation2d(units::degree_t(-target.GetYaw()));
+  auto translationToTarget = frc::Translation2d(units::meter_t(1), rotationToTarget);
   
   // generating a 2d target pose (not actually to go there, only for calculations)
   auto targetPose = frc::Pose2d(translationToTarget, rotationToTarget); 
   
   auto distance = units::meter_t(std::hypot(translationToTarget.X().value(), translationToTarget.Y().value()));
   
-  frc::SmartDashboard::PutNumber("X trans", translationToTarget.X().value()); 
-  frc::SmartDashboard::PutNumber("Y trans", translationToTarget.Y().value());
+
 
   auto linearVelocity = desiredVelocity; 
   // purpousely lowering speed 
@@ -75,7 +80,7 @@ void GoToTarget::Execute() {
 
   auto estimatedTime = distance / linearVelocity;  
 
-  auto angularVelocity = units::radians_per_second_t(0.00001); //rotationToTarget.Radians() / estimatedTime; 
+  auto angularVelocity = rotationToTarget.Radians() / estimatedTime; 
   frc::SmartDashboard::PutNumber("Desired AV", angularVelocity.value());
 
   // output calculation 
@@ -107,7 +112,7 @@ void GoToTarget::Execute() {
           getSpeeds().right.value(), targetWheelSpeeds.right.value())} +
       rightFeedforward;
 
-  //m_output(leftOutput, rightOutput); 
+  m_output(leftOutput, rightOutput); 
 
   previousSpeed = targetWheelSpeeds;
 }
