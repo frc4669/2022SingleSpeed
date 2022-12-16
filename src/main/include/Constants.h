@@ -31,11 +31,11 @@ namespace OperatorConstants {
 }
 
 namespace Dimensions {
-  constexpr auto kTargetHeight = 22_in;
-  constexpr auto kCameraPitch = units::degree_t(0);
-  constexpr auto kCameraHeight = 14.8_in;
+  constexpr auto kTargetHeight = 1.23_m;
+  constexpr auto kCameraPitch = 30_deg;
+  constexpr auto kCameraHeight = 17.2_in;
 
-  constexpr auto kDesiredRange = 2_m;
+  constexpr auto kDesiredRange = 3.5_m;
 }
 
 namespace DriveConstants {

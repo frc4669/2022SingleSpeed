@@ -12,6 +12,9 @@
 #include <frc2/command/PIDCommand.h>
 #include <frc/controller/SimpleMotorFeedforward.h>
 
+#include <photonlib/PhotonUtils.h>
+#include <photonlib/PhotonTrackedTarget.h>
+
 #include <subsystems/Drivetrain.h>
 #include <subsystems/Vision.h>
 
@@ -71,5 +74,5 @@ class GoToTarget
     std::function<void(units::volt_t left, units::volt_t right)>m_output;
 
     // config 
-    units::meters_per_second_t desiredVelocity { 0.5 }; 
+    units::meters_per_second_t desiredVelocity { 1 }; 
 };
