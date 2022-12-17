@@ -5,8 +5,6 @@
 #pragma once
 
 #include <frc2/command/SubsystemBase.h>
-#include <ctre/Phoenix.h>
-#include "Constants.h"
 #include <frc/motorcontrol/MotorControllerGroup.h>
 #include <frc/drive/DifferentialDrive.h>
 #include <frc/kinematics/DifferentialDriveOdometry.h>
@@ -14,7 +12,12 @@
 #include <frc/geometry/Rotation2d.h>
 #include <frc/geometry/Pose2d.h>
 #include <frc/smartdashboard/Field2d.h>
-#include <frc/ADIS16470_IMU.h>
+// #include <frc/ADIS16470_IMU.h>
+
+#include <ctre/Phoenix.h>
+#include <AHRS.h>
+
+#include "Constants.h"
 
 class Drivetrain : public frc2::SubsystemBase {
  public:
@@ -66,5 +69,7 @@ class Drivetrain : public frc2::SubsystemBase {
   frc::DifferentialDriveOdometry m_odometry{ frc::Rotation2d(), frc::Pose2d() };
   frc::Field2d m_field;
 
-  frc::ADIS16470_IMU m_imu;
+  AHRS m_imu { frc::SPI::Port::kMXP };
+
+  // frc::ADIS16470_IMU m_imu;
 };

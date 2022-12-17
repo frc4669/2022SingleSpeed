@@ -4,132 +4,77 @@
 
 #include "commands/GoToTarget.h"
 
-GoToTarget::GoToTarget(
-    Drivetrain *drivetrain,
-    Vision *vision,
-    frc::RamseteController ramseteController,
-    frc::DifferentialDriveKinematics kinematics,
-    frc::SimpleMotorFeedforward<units::meters> feedforward,
-    frc2::PIDController leftPID,
-    frc2::PIDController rightPID,
-    std::function<frc::DifferentialDriveWheelSpeeds()> wheelSpeedsGetter,
-    std::function<void(units::volt_t left, units::volt_t right)> motorVoltageSetter) : // initilize list
-                                                                                       m_controller(ramseteController),
-                                                                                       m_kinematics(kinematics),
-                                                                                       m_feedforward(feedforward)
-{
-
-  AddRequirements({drivetrain, vision});
-
-  // initializing pointers
-  this->m_pid.left = std::make_unique<frc2::PIDController>(leftPID);
-  this->m_pid.right = std::make_unique<frc2::PIDController>(rightPID);
-  this->m_output = motorVoltageSetter;
-  this->getSpeeds = wheelSpeedsGetter;
-  this->m_drivetrain = drivetrain;
-  this->m_vision = vision;
+GoToTarget::GoToTarget(Drivetrain *drivetrain, Vision *vision) : m_drivetrain(drivetrain), m_vision(vision), m_previousTime(-1_s), m_desiredVelocity(0.5_mps) {
+  AddRequirements({ drivetrain, vision });
 }
 
 // Called when the command is initially scheduled.
-void GoToTarget::Initialize()
-{
-  previousTime = units::second_t(-1);
-
-  previousSpeed = m_kinematics.ToWheelSpeeds(frc::ChassisSpeeds());
-
-  m_pid.left->Reset();
-  m_pid.right->Reset();
-
-  timer.Reset();
-  timer.Start();
+void GoToTarget::Initialize() {
+  m_timer.Reset();
+  m_timer.Start();
 }
 
 // Called repeatedly when this Command is scheduled to run
-void GoToTarget::Execute()
-{
+void GoToTarget::Execute() {
+  auto currentTime = m_timer.Get();
+  auto dt = currentTime - m_previousTime;
+  m_previousTime = currentTime;
 
-  auto currentTime = timer.Get();
-  auto dt = currentTime - previousTime;
-  this->previousTime = currentTime;
+  units::volt_t leftOut;
+  units::volt_t rightOut;
 
-  auto targetPtr = m_vision->GetBestTarget();
+  photonlib::PhotonPipelineResult result = m_vision->GetPipelineResult();
 
-  if (targetPtr == nullptr) {
-    m_output(units::volt_t(0), units::volt_t(0));
-    return;
+  if (result.HasTargets()) {
+    photonlib::PhotonTrackedTarget target = result.GetBestTarget();
+
+    // calculating the position of the target relative to the robot
+
+    frc::Rotation2d rotationToTarget(units::degree_t(-target.GetYaw()));
+    frc::Translation2d translationToTarget(1_m, rotationToTarget);
+    frc::Pose2d targetPose(translationToTarget, rotationToTarget);
+
+    units::meter_t distance = photonlib::PhotonUtils::CalculateDistanceToTarget(
+      Dimensions::kCameraHeight, Dimensions::kTargetHeight, Dimensions::kCameraPitch,
+      units::degree_t(result.GetBestTarget().GetPitch())
+    );
+
+    // calculating the angular velocity the robot should travel at to ensure a smooth curve
+
+    units::second_t timeToTarget = distance / m_desiredVelocity;
+    units::radians_per_second_t angularVelocity = rotationToTarget.Radians() / timeToTarget;
+
+    // calculating the overall velocity the robot should travel at
+    // accounting for the desired linear and angular velocities and the target's position
+
+    frc::DifferentialDriveWheelSpeeds currentSpeed = m_drivetrain->GetWheelSpeeds();
+    frc::DifferentialDriveWheelSpeeds targetSpeed = m_kinematics.ToWheelSpeeds(m_ramsete.Calculate(frc::Pose2d(), targetPose, m_desiredVelocity, angularVelocity));
+
+    // feedback and feedforward control, accounting for future and past inaccuracies in robot movement
+
+    units::volt_t leftFF = m_feedforward.Calculate(targetSpeed.left, (targetSpeed.left - m_previousSpeed.left) / dt);
+    units::volt_t rightFF = m_feedforward.Calculate(targetSpeed.right, (targetSpeed.right - m_previousSpeed.right) / dt);
+
+    leftOut = units::volt_t(m_leftControl.Calculate(currentSpeed.left.value(), targetSpeed.left.value())) + leftFF;
+    rightOut = units::volt_t(m_rightControl.Calculate(currentSpeed.right.value(), targetSpeed.right.value())) + rightFF;
+
+    m_previousSpeed = targetSpeed;
+  } else {
+    // if no targets are found, ensure the robot stays immobile
+    
+    leftOut = 0_V;
+    rightOut = 0_V;
+
+    m_previousSpeed = frc::DifferentialDriveWheelSpeeds();
   }
-  auto target = *targetPtr;
 
-  // units::meter_t range = photonlib::PhotonUtils::CalculateDistanceToTarget(Dimensions::kCameraHeight, Dimensions::kTargetHeight, Dimensions::kCameraPitch, units::degree_t(target.GetPitch()));
-
-  // frc::SmartDashboard::PutNumber("Range to Target", range.value());
-  // if (range >= Dimensions::kDesiredRange - 0.1_m || range <= Dimensions::kDesiredRange + 0.1_m) {
-  //   m_output(units::volt_t(0), units::volt_t(0));
-  //   return;
-  // }
-
-    // auto targetPose3D = target.GetBestCameraToTarget();
-
-    // converting 3d tracking to 2d translation and rotation
-    // auto translationToTarget = targetPose3D.Translation().ToTranslation2d();
-    // auto rotationToTarget = targetPose3D.Rotation().ToRotation2d();
-
-  auto rotationToTarget = frc::Rotation2d(units::degree_t(-target.GetYaw()));
-  auto translationToTarget = frc::Translation2d(units::meter_t(1), rotationToTarget);
-
-  // generating a 2d target pose (not actually to go there, only for calculations)
-  auto targetPose = frc::Pose2d(translationToTarget, rotationToTarget);
-
-  auto distance = units::meter_t(std::hypot(translationToTarget.X().value(), translationToTarget.Y().value()));
-
-  auto linearVelocity = desiredVelocity;
-  // purpousely lowering speed
-  // if (!target.isCertain) linearVelocity /= 2;
-
-  auto estimatedTime = distance / linearVelocity;
-
-  auto angularVelocity = rotationToTarget.Radians() / estimatedTime;
-  frc::SmartDashboard::PutNumber("Desired AV", angularVelocity.value());
-
-  // output calculation
-  // calculations referenced from frc::RasmeteCommand
-  // https://github.com/wpilibsuite/allwpilib/blob/878cc8defb27f5089395186ad1d907993b57be9c/wpilibNewCommands/src/main/native/cpp/frc2/command/RamseteCommand.cpp
-
-  // this's most likely not gonna work, it's more like a closed looped controller rn cuz it'll be reacting based on the
-  // next to impossible results of wished linear no movement of target & accurate info
-
-  auto chassieSpeeds = m_controller.Calculate(frc::Pose2d(), targetPose, linearVelocity, angularVelocity);
-  auto targetWheelSpeeds = m_kinematics.ToWheelSpeeds(chassieSpeeds);
-
-  // feedforward and pid control stuff
-  auto leftFeedforward = m_feedforward.Calculate(
-      targetWheelSpeeds.left,
-      (targetWheelSpeeds.left - previousSpeed.left) / dt);
-
-  auto rightFeedforward = m_feedforward.Calculate(
-      targetWheelSpeeds.right,
-      (targetWheelSpeeds.right - previousSpeed.right) / dt);
-
-  auto leftOutput =
-      units::volt_t{m_pid.left->Calculate(
-          getSpeeds().left.value(), targetWheelSpeeds.left.value())} +
-      leftFeedforward;
-
-  auto rightOutput =
-      units::volt_t{m_pid.right->Calculate(
-          getSpeeds().right.value(), targetWheelSpeeds.right.value())} +
-      rightFeedforward;
-
-  m_output(leftOutput, rightOutput);
-
-  previousSpeed = targetWheelSpeeds;
+  m_drivetrain->TankDriveVolts(leftOut, rightOut);
 }
 
 // Called once the command ends or is interrupted.
 void GoToTarget::End(bool interrupted) {}
 
 // Returns true when the command should end.
-bool GoToTarget::IsFinished()
-{
+bool GoToTarget::IsFinished() {
   return false;
 }

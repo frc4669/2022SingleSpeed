@@ -6,16 +6,8 @@
 
 Vision::Vision() = default;
 
-
 PhotonPipelineResult Vision::GetPipelineResult() {
     return m_frontCamera.GetLatestResult();
-}
-
-std::unique_ptr<PhotonTrackedTarget> Vision::GetBestTarget() {
-    auto latest = m_frontCamera.GetLatestResult(); 
-    if (!latest.HasTargets()) return nullptr;
-
-    return std::make_unique<PhotonTrackedTarget>(latest.GetBestTarget()); 
 }
 
 // This method will be called once per scheduler run

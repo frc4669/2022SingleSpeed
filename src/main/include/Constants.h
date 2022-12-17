@@ -34,7 +34,7 @@ namespace Dimensions {
   constexpr auto kTargetHeight = 1.23_m;
   constexpr auto kCameraPitch = 30_deg;
   constexpr auto kCameraHeight = 17.2_in;
-
+  
   constexpr auto kDesiredRange = 3.5_m;
 }
 

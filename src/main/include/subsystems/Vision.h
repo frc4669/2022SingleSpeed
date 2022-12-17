@@ -5,13 +5,8 @@
 #pragma once
 
 #include <frc2/command/SubsystemBase.h>
-
-#include <frc/geometry/Transform2d.h>
-#include <frc/geometry/Pose2d.h>
 #include <frc/smartdashboard/SmartDashboard.h>
-#include <units/units.h>
 
-#include <photonlib/PhotonUtils.h>
 #include <photonlib/PhotonCamera.h>
 
 #include "Constants.h"
@@ -23,9 +18,6 @@ class Vision : public frc2::SubsystemBase {
   Vision();
 
   PhotonPipelineResult GetPipelineResult();
-
-  // returns the best target that's tracked, nullptr if it doesn't exist
-  std::unique_ptr<PhotonTrackedTarget> GetBestTarget(); 
 
   /**
    * Will be called periodically whenever the CommandScheduler runs.

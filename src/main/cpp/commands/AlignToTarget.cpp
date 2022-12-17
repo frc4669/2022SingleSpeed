@@ -4,8 +4,6 @@
 
 #include "commands/AlignToTarget.h"
 
-#include <photonlib/PhotonPipelineResult.h>
-
 AlignToTarget::AlignToTarget(Drivetrain* drivetrain, Vision* vision) : m_drivetrain(drivetrain), m_vision(vision) {
   
   // Use addRequirements() here to declare subsystem dependencies.

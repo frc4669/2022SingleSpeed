@@ -16,7 +16,7 @@
 #include "commands/RangeTarget.h"
 #include "commands/AlignAndRange.h"
 
-RobotContainer::RobotContainer() : m_autonomousCommand(&m_subsystem) {
+RobotContainer::RobotContainer() {
   // Initialize all of your commands and subsystems here
 
   // Configure the button bindings
@@ -34,27 +34,9 @@ RobotContainer::RobotContainer() : m_autonomousCommand(&m_subsystem) {
 
 void RobotContainer::ConfigureButtonBindings() {
   i_f310.redButton.WhenPressed([this] { m_drivetrain.ResetOdometry(frc::Pose2d(), frc::Rotation2d()); }, { &m_drivetrain });
-  // i_f310.rightShoulderButton.WhenHeld(AlignToTarget(&m_drivetrain, &m_vision));
-  // i_f310.leftShoulderButton.WhenHeld(RangeTarget(&m_drivetrain, &m_vision));
+
   i_f310.rightShoulderButton.WhenHeld(AlignAndRange(&m_drivetrain, &m_vision));
-  
-  i_f310.orangeButton.WhenHeld(
-    GoToTarget(
-      &m_drivetrain,
-      &m_vision, 
-      frc::RamseteController(), 
-      frc::DifferentialDriveKinematics(DriveConstants::kTrackWidth), 
-      frc::SimpleMotorFeedforward<units::meters>(DriveConstants::ks, DriveConstants::kv, DriveConstants::ka), 
-      frc2::PIDController(DriveConstants::kp, DriveConstants::ki, DriveConstants::kd),
-      frc2::PIDController(DriveConstants::kp, DriveConstants::ki, DriveConstants::kd),
-      [this] { return m_drivetrain.GetWheelSpeeds(); },
-      [this] (auto left, auto right) { 
-          frc::SmartDashboard::PutNumber("Left OUT", left.value()); 
-          frc::SmartDashboard::PutNumber("Right OUT", right.value());
-        return m_drivetrain.TankDriveVolts(left, right); 
-      }
-    )
-  );
+  i_f310.orangeButton.WhenHeld(GoToTarget(&m_drivetrain, &m_vision));
 }
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
@@ -81,7 +63,6 @@ frc2::Command* RobotContainer::GetAutonomousCommand() {
   };
 
   return new frc2::SequentialCommandGroup(
-    std::move(followTrajectory)/*,
-    frc2::InstantCommand([this] { m_drivetrain.TankDriveVolts(0_V, 0_V); })*/
+    std::move(followTrajectory)
   );
 }

@@ -48,7 +48,7 @@ void Drivetrain::CurvatureDrive(double speed, double rotation) {
 
 void Drivetrain::ResetOdometry(frc::Pose2d pose, frc::Rotation2d rotation) {
   ResetEncoders();
-  m_imu.Reset();
+  m_imu.ZeroYaw();
   m_odometry.ResetPosition(pose, rotation);
 }
 
@@ -64,7 +64,8 @@ frc::Pose2d Drivetrain::GetOdometryPose() {
 }
 
 frc::Rotation2d Drivetrain::GetRotation() {
-  return frc::Rotation2d(m_imu.GetAngle());
+  double heading = m_imu.GetAngle();
+  return frc::Rotation2d(units::degree_t(heading));
 }
 
 units::meters_per_second_t Drivetrain::GetLeftVelocity() {
