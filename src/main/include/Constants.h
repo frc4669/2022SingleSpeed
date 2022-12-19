@@ -27,7 +27,9 @@
 namespace OperatorConstants {
   constexpr bool kCanTurnInPlace = true; // curvature drive turning in place
 
-  constexpr double kTurningSpeedMutiplier = 0.3; // slows down turning movement as joystick is too sensentive. 
+  constexpr double kTurningSpeedMutiplier = 0.3; // slows down turning movement as joystick is too sensentive.
+  constexpr auto kTeleopAutoVelocity = 2_mps;
+  constexpr auto kTeleopAutoAcceleration = 2_mps_sq;
 }
 
 namespace Dimensions {

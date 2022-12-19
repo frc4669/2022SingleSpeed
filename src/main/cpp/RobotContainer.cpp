@@ -15,6 +15,7 @@
 #include "commands/AlignToTarget.h"
 #include "commands/RangeTarget.h"
 #include "commands/AlignAndRange.h"
+#include "commands/NewGoToTarget.h"
 
 RobotContainer::RobotContainer() {
   // Initialize all of your commands and subsystems here
@@ -37,6 +38,7 @@ void RobotContainer::ConfigureButtonBindings() {
 
   i_f310.rightShoulderButton.WhenHeld(AlignAndRange(&m_drivetrain, &m_vision));
   i_f310.orangeButton.WhenHeld(GoToTarget(&m_drivetrain, &m_vision));
+  i_f310.leftShoulderButton.ToggleWhenPressed(NewGoToTarget(&m_drivetrain, &m_vision));
 }
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
