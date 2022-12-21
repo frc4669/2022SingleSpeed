@@ -31,6 +31,8 @@ RobotContainer::RobotContainer() {
   ));
 
   m_drivetrain.ResetEncoders();
+
+  ConfigureAutonomous();
 }
 
 void RobotContainer::ConfigureButtonBindings() {
@@ -41,8 +43,15 @@ void RobotContainer::ConfigureButtonBindings() {
   i_f310.leftShoulderButton.ToggleWhenPressed(NewGoToTarget(&m_drivetrain, &m_vision));
 }
 
+void RobotContainer::ConfigureAutonomous() {
+  m_autoChooser.SetDefaultOption("Default Auto (forward 4 meters)", &m_defaultAutoRoutine);
+  m_autoChooser.AddOption("Example Auto (DO NOT RUN)", &m_exampleAutoRoutine);
+
+  frc::SmartDashboard::PutData(&m_autoChooser);
+}
+
 frc2::Command* RobotContainer::GetAutonomousCommand() {
-  pathplanner::PathPlannerTrajectory autoTrajectory = pathplanner::PathPlanner::loadPath(TRAJECTORY_NAME, DriveConstants::kMaxAutoSpeed, DriveConstants::kMaxAutoAccel);
+  /*pathplanner::PathPlannerTrajectory autoTrajectory = pathplanner::PathPlanner::loadPath(TRAJECTORY_NAME, DriveConstants::kMaxAutoSpeed, DriveConstants::kMaxAutoAccel);
   frc::Trajectory WPItrajectory = autoTrajectory.asWPILibTrajectory();
 
   frc::SmartDashboard::PutNumber("Initial Auto Rotation", WPItrajectory.InitialPose().Rotation().Degrees().value());
@@ -66,5 +75,7 @@ frc2::Command* RobotContainer::GetAutonomousCommand() {
 
   return new frc2::SequentialCommandGroup(
     std::move(followTrajectory)
-  );
+  );*/
+
+  return m_autoChooser.GetSelected();
 }

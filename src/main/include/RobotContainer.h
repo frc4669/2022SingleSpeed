@@ -5,12 +5,15 @@
 #pragma once
 
 #include <frc2/command/Command.h>
+#include <frc2/command/RunCommand.h>
+#include <frc/smartdashboard/SendableChooser.h>
 
 #include "subsystems/Drivetrain.h"
 #include "subsystems/Vision.h"
 #include "controllers/GamepadF310.h"
 
-#include <frc2/command/RunCommand.h>
+#include "commands/autonomous/DefaultAutoRoutine.h"
+#include "commands/autonomous/ExampleAutoRoutine.h"
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -32,5 +35,13 @@ class RobotContainer {
   Vision m_vision;
 
   GamepadF310 i_f310{ 0 };
+
+  frc::SendableChooser<frc2::Command *> m_autoChooser;
+
+  DefaultAutoRoutine m_defaultAutoRoutine { &m_drivetrain };
+  ExampleAutoRoutine m_exampleAutoRoutine { &m_drivetrain, &m_vision };
+
   void ConfigureButtonBindings();
+
+  void ConfigureAutonomous();
 };
